@@ -51,7 +51,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
             waterDropColor: Colors.blue,
         ),
         onRefresh: _cargarUsuarios,
-        child: _listViewUsuarios(usuarios: usuarios)
+        child: _ListViewUsuarios(usuarios: usuarios)
         )
    );
   }
@@ -59,7 +59,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
   _cargarUsuarios() async{
 
     // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   
@@ -68,8 +68,8 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
 }
 
-class _listViewUsuarios extends StatelessWidget {
-  const _listViewUsuarios({
+class _ListViewUsuarios extends StatelessWidget {
+  const _ListViewUsuarios({
     Key? key,
     required this.usuarios,
   }) : super(key: key);
@@ -81,7 +81,7 @@ class _listViewUsuarios extends StatelessWidget {
     return ListView.separated(
       physics: const BouncingScrollPhysics(),
       itemCount: usuarios.length,
-      itemBuilder: (BuildContext context, int index) => _usuarioListTile(usuario: usuarios[index]),
+      itemBuilder: (BuildContext context, int index) => _UsuarioListTile(usuario: usuarios[index]),
       /*{ 
        return _usuarioListTile(usuario: usuarios[index]);
       }, */
@@ -95,11 +95,11 @@ class _listViewUsuarios extends StatelessWidget {
   
 }
 
-class _usuarioListTile extends StatelessWidget {
+class _UsuarioListTile extends StatelessWidget {
 
   final Usuario usuario;
 
-  const _usuarioListTile({
+  const _UsuarioListTile({
     Key? key,
     required this.usuario,
   }) : super(key: key);

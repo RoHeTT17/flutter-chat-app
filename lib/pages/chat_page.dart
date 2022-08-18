@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:chat/widgets/chat_message.dart';
 
 class ChatPage extends StatefulWidget {
  
@@ -12,10 +13,12 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin{
  
   final _textController = TextEditingController();
   final _focusNode = FocusNode();
+
+  List<ChatMessage> _messages = [];
 
   bool _isWritting = false;
 
@@ -43,9 +46,13 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             Flexible(
                     child: ListView.builder(
+                      itemCount: _messages.length,
                       reverse: true,
                       physics:  const BouncingScrollPhysics(),
-                      itemBuilder: (BuildContext context, int index) { return Text('$index');  },
+                      itemBuilder: (BuildContext context, int index) { 
+                        //return Text('$index'); 
+                        return _messages[index]; 
+                      },
                       )
                     ),
                     
@@ -83,7 +90,7 @@ class _ChatPageState extends State<ChatPage> {
 
                                         });
                                       },
-                                      decoration: InputDecoration.collapsed(hintText: 'Enviar mensaje'),
+                                      decoration: const InputDecoration.collapsed(hintText: 'Enviar mensaje'),
                                       focusNode: _focusNode,
                                      )
             ),
@@ -105,7 +112,7 @@ class _ChatPageState extends State<ChatPage> {
                                             splashColor:  Colors.transparent,//Quitar el efecto del material
                                             icon: const Icon(Icons.send,),
                                             onPressed: _isWritting
-                                                      ? () => _handleSubmit(_textController.text).trim()
+                                                      ? () => _handleSubmit(_textController.text.trim())
                                                       : null,
                                            ),
                         ),
@@ -118,15 +125,38 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   _handleSubmit(String texto){
+    //print(texto);
 
+    if (texto.length == 0) return;
 
-    print(texto);
+    final newMessage =  ChatMessage(
+                                      texto: texto, 
+                                      uid: '123',
+                                      animationController: AnimationController(vsync: this, duration: const Duration(milliseconds: 200)) ,);
 
     setState(() {
+      //Agregar el nuevo mensaje al arreglo, en la posición 0 para que sea el que se muestra abajo
+      _messages.insert(0, newMessage);
+      newMessage.animationController.forward();
+
       _textController.clear();
       _focusNode.requestFocus();
       _isWritting = false;
     });
 
   }
+
+  @override
+  void dispose() {
+    
+    //Limpiar para liberar recursos
+    //TODO: Limpiar Off del Socket
+    
+    for (ChatMessage message in _messages){
+      message.animationController.dispose();
+    }
+
+    super.dispose();
+  }
+
 }
