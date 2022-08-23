@@ -4,10 +4,10 @@ class CustomButtom extends StatelessWidget {
 
   final String labelButtom;
   final Color  colorButtom;
-  final Function() functionButtom;
+  final Function()? functionButtom;
 
   const CustomButtom({
-    Key? key, required this.labelButtom, this.colorButtom = Colors.blue, required this.functionButtom,
+    Key? key, required this.labelButtom, this.colorButtom = Colors.blue,  this.functionButtom,
   }) : super(key: key);
 
   @override

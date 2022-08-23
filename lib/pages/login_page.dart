@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
+import 'package:chat/helpers/mostrar_alerta.dart';
+import 'package:chat/services/auth_services.dart';
+
 import 'package:chat/widgets/custom_logo.dart';
 import 'package:chat/widgets/custom_input.dart';
 import 'package:chat/widgets/custom_buttom.dart';
@@ -64,6 +69,8 @@ class __FormStateState extends State<_Form> {
     final emailCtrl = TextEditingController();
     final pswdCtrl  = TextEditingController();
 
+    final authService = Provider.of<AuthServices>(context);
+
     return Container(
       margin:  const EdgeInsets.only(top: 40),
       padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -87,10 +94,35 @@ class __FormStateState extends State<_Form> {
           
           CustomButtom(
             labelButtom: 'Ingresar',
-            functionButtom: (){
-              print('email' + emailCtrl.text);
-              print('pwd ${pswdCtrl.text}');
-            },
+            functionButtom: /*(){
+                 print('email' + emailCtrl.text);
+                 print('pwd ${pswdCtrl.text}');
+
+                 emailCtrl.text = 'holis';
+            }*/
+            
+            authService.getAutenticando
+                            ? /*() =>{ }*/null
+                            : () async{
+
+                                      //Ocultar teclado
+                                      //FocusScope.of(context).unfocus();
+                                        FocusManager.instance.primaryFocus?.unfocus();
+
+                                        final loginOk = await authService.login(emailCtrl.text.trim(), pswdCtrl.text.trim()); 
+                                    
+                                        if(loginOk){
+                                          //TODO: Conectar al socket server
+                                          //Navegar a otra pantalla
+                                          Navigator.pushReplacementNamed(context, 'usuarios');
+                                        }else{
+                                          //Mostrar alerta
+          
+                                          mostrarAlerta(context, 'Login incorrecto', 'Revise creedenciales');
+                                         
+                                        } 
+                                      },
+
           ),
 
         ],

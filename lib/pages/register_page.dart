@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
+import 'package:chat/helpers/mostrar_alerta.dart';
+import 'package:chat/services/auth_services.dart';
+
 import 'package:chat/widgets/custom_logo.dart';
 import 'package:chat/widgets/custom_input.dart';
 import 'package:chat/widgets/custom_buttom.dart';
@@ -48,10 +53,13 @@ class _Form extends StatefulWidget {
 class __FormStateState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
+  
+    final authService = Provider.of<AuthServices>(context);
 
     final nameCtrl  = TextEditingController();
     final emailCtrl = TextEditingController();
     final pswdCtrl  = TextEditingController();
+
 
     return Container(
       margin:  const EdgeInsets.only(top: 40),
@@ -81,11 +89,24 @@ class __FormStateState extends State<_Form> {
 
           
           CustomButtom(
-            labelButtom: 'Ingresar',
-            functionButtom: (){
-              print('email' + emailCtrl.text);
-              print('pwd ${pswdCtrl.text}');
-            },
+            labelButtom: 'Registrarse',
+            functionButtom: authService.getAutenticando
+                            ? (){
+                              //print('email' + emailCtrl.text);
+                              //print('pwd ${pswdCtrl.text}');
+                               }
+                            : ()async{
+
+                                 final registerOK = await authService.register(nameCtrl.text, emailCtrl.text, pswdCtrl.text);
+
+                                  if(registerOK){
+                                     Navigator.pushReplacementNamed(context, 'usuarios');   
+                                  }else{
+                                    mostrarAlerta(context, 'Registro incorrecto', authService.getMsgError!);
+                                  }
+
+
+                                }   
           ),
 
         ],
